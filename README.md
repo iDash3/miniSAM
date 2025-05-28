@@ -1,6 +1,8 @@
 # TinySAM: Plug and play ONNX SAM segmentation in the browser
 
-TinySAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It is a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution. The training code used for the model distillation process will be made available soon. TinySAM provides a stateful API for interactive segmentation by allowing users to add include/exclude clicks on an image.
+TinySAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It is a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution. 
+
+The training code used for the model distillation process will be made available soon. TinySAM provides a stateful API for interactive segmentation by allowing users to add include/exclude clicks on an image.
 
 ## Features
 
