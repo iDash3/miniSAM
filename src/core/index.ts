@@ -1,8 +1,12 @@
 import { InferenceSession, Tensor } from "onnxruntime-web";
-import FULL_ENCODER_MODEL_URL from "../models/encoder.onnx";
-import FULL_SAM_MODEL_URL from "../models/sam.onnx";
-
-import { ENCODER_INPUT_SIZE } from "./constants";
+// Import the models to ensure Webpack processes them
+import "../models/encoder.onnx";
+import "../models/sam.onnx";
+import {
+  DEFAULT_ENCODER_MODEL_PATH,
+  DEFAULT_SAM_MODEL_PATH,
+  ENCODER_INPUT_SIZE,
+} from "./constants";
 import { preprocessImageForEncoder } from "./utils/preprocess";
 import { buildSamFeeds } from "./utils/modelData";
 import { maskToImageData } from "./utils/postprocess";
@@ -112,8 +116,8 @@ export async function initSegmentation(opts?: {
       const options = opts || {};
 
       let finalEncoderModelPath =
-        options.encoderModelPath || FULL_ENCODER_MODEL_URL;
-      let finalSamModelPath = options.samModelPath || FULL_SAM_MODEL_URL;
+        options.encoderModelPath || DEFAULT_ENCODER_MODEL_PATH;
+      let finalSamModelPath = options.samModelPath || DEFAULT_SAM_MODEL_PATH;
       const finalSessionOptions =
         options.sessionOptions || DEFAULT_SESSION_OPTIONS;
 

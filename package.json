@@ -1,6 +1,6 @@
 {
   "name": "tinysam",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
   "description": "Plug and play ONNX SAM segmentation in the browser",
   "main": "dist/tinysam.js",

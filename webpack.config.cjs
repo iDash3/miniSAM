@@ -27,12 +27,9 @@ module.exports = {
       },
       {
         test: /\.onnx$/,
-        type: "asset/inline",
+        type: "asset/resource",
         generator: {
-          dataUrl: {
-            encoding: "base64",
-            mimetype: "application/octet-stream",
-          },
+          filename: "[name][ext]",
         },
       },
     ],
