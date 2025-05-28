@@ -1,0 +1,47 @@
+{
+  "name": "tinysam",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Plug-and-play ONNX SAM segmentation in the browser",
+  "main": "dist/tinysam.js",
+  "module": "dist/tinysam.js",
+  "types": "dist/tinysam.d.ts",
+  "scripts": {
+    "build": "rm -rf dist && webpack && npm pack"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "onnx",
+    "onnxruntime-web",
+    "sam",
+    "segment anything",
+    "image segmentation",
+    "browser",
+    "ai",
+    "machine learning"
+  ],
+  "author": "Isaac Bautista Silva <me@isaacbs.com> (https://isaacbs.com)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iDash3/tinysam.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iDash3/tinysam/issues"
+  },
+  "homepage": "https://github.com/iDash3/tinysam#readme",
+  "peerDependencies": {
+    "onnxruntime-web": "^1.22.0"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.5.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
+  }
+}
