@@ -5,7 +5,7 @@
   "description": "Plug-and-play ONNX SAM segmentation in the browser",
   "main": "dist/tinysam.js",
   "module": "dist/tinysam.js",
-  "types": "dist/tinysam.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && webpack && npm pack"
   },
