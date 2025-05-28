@@ -1,6 +1,6 @@
 # TinySAM: Plug and play ONNX SAM segmentation in the browser
 
-TinySAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It is a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution. 
+TinySAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It is a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution.
 
 The training code used for the model distillation process will be made available soon. TinySAM provides a stateful API for interactive segmentation by allowing users to add include/exclude clicks on an image.
 
@@ -41,8 +41,15 @@ import {
 async function runSegmentation(myImageElement, clickPoints) {
   try {
     // 1. Initialize TinySAM (loads models)
-    // You can optionally provide paths to your own .onnx models
+    // By default, models are now loaded from CDN.
+    // You can still override with local paths if needed.
+    // See "Model Loading" section for more details.
     await initSegmentation({
+      // To use default CDN models (recommended):
+      // No specific paths needed, or use:
+      // encoderModelPath: DEFAULT_ENCODER_MODEL_PATH,
+      // samModelPath: DEFAULT_SAM_MODEL_PATH,
+      // For custom local/CDN models:
       // encoderModelPath: '/path/to/your/encoder.onnx',
       // samModelPath: '/path/to/your/sam_decoder.onnx'
     });
@@ -110,11 +117,11 @@ async function runSegmentation(myImageElement, clickPoints) {
 
 ### `initSegmentation(opts?: InitializationOptions): Promise<void>`
 
-Initializes the segmentation engine by loading the ONNX models. This must be called before any other TinySAM functions.
+Initializes the segmentation engine by loading the ONNX models. This must be called before any other TinySAM functions. See the "Model Loading" section for details on how models are loaded and how to customize paths.
 
 - `opts` (optional): `InitializationOptions` object.
-  - `encoderModelPath?: string`: URL or path to the encoder ONNX model. Defaults to the bundled encoder.
-  - `samModelPath?: string`: URL or path to the SAM (decoder) ONNX model. Defaults to the bundled SAM model.
+  - `encoderModelPath?: string`: URL or path to the encoder ONNX model. If not provided, defaults to the CDN path `DEFAULT_ENCODER_MODEL_PATH`.
+  - `samModelPath?: string`: URL or path to the SAM (decoder) ONNX model. If not provided, defaults to the CDN path `DEFAULT_SAM_MODEL_PATH`.
   - `sessionOptions?: InferenceSession.SessionOptions`: Advanced ONNX Runtime session options.
 
 ### `precomputeEmbedding(image: HTMLImageElement | HTMLCanvasElement): Promise<string>`
@@ -147,6 +154,55 @@ Clears all cached image embeddings.
 ### `clearAllSessions(): void`
 
 Clears all active `SegmentationSession` states. Note: This does not call `dispose()` on individual sessions but rather clears the central store.
+
+---
+
+## Model Loading: CDN by Default, Custom Paths Supported
+
+TinySAM is designed for ease of use and performance. By default, it loads the necessary ONNX models (`encoder.onnx` and `sam.onnx`) from a CDN. This approach keeps your application bundle small and uses browser caching for faster load times for your users.
+
+When you initialize TinySAM without providing specific model paths, it will use default CDN URLs:
+
+```typescript
+import {
+  initSegmentation,
+  DEFAULT_ENCODER_MODEL_PATH, // Default CDN path for the encoder
+  DEFAULT_SAM_MODEL_PATH, // Default CDN path for the SAM decoder
+} from "tinysam";
+
+async function initialize() {
+  // Initializes with default models from CDN
+  await initSegmentation();
+  // OR, explicitly using the default paths (equivalent to the above):
+  // await initSegmentation({
+  //   encoderModelPath: DEFAULT_ENCODER_MODEL_PATH,
+  //   samModelPath:     DEFAULT_SAM_MODEL_PATH,
+  // });
+  console.log("TinySAM initialized with models from CDN!");
+}
+
+initialize();
+```
+
+**Using Your Own Models (Local or Custom CDN):**
+
+If you need to use specific versions of the ONNX models, or if you prefer to host them yourself (either locally or on your own CDN), you can easily override the default behavior by providing the paths in the `initSegmentation` options:
+
+```typescript
+import { initSegmentation } from "tinysam";
+
+async function initializeWithCustomModels() {
+  await initSegmentation({
+    encoderModelPath: "/path/to/your/local/or/custom_cdn/encoder.onnx",
+    samModelPath: "/path/to/your/local/or/custom_cdn/sam_decoder.onnx",
+  });
+  console.log("TinySAM initialized with custom models!");
+}
+
+initializeWithCustomModels();
+```
+
+This flexibility allows you to manage model deployment according to your project's specific needs while still benefiting from TinySAM's core segmentation capabilities.
 
 ---
 
