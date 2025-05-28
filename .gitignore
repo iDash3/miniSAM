@@ -33,3 +33,6 @@ coverage/
 # Misc
 .DS_Store
 Thumbs.db
+
+# Test files
+test-npm-package.js
