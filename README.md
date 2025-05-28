@@ -7,7 +7,7 @@ The training code used for the model distillation process will be made available
 ## Features
 
 - **In-Browser Segmentation:** Runs entirely on the client-side, no server needed.
-- **ONNX Runtime:** Leverages `onnxruntime-web` for efficient model inference.
+- **ONNX Runtime:** `onnxruntime-web` for efficient model inference.
 - **Stateful Segmentation Sessions:** Manage clicks and masks per image using a `SegmentationSession`.
 - **Click-Based Interaction:** Supports positive (include) and negative (exclude) clicks.
 - **Embedding Cache:** Caches image embeddings to speed up subsequent operations on the same image.
@@ -229,3 +229,5 @@ If you are working on the `tinysam` library itself:
 - Install dependencies: `npm install`
 - Build the library: `npm run build`
   This command cleans the `dist` folder, runs webpack to bundle the library, and then uses `npm pack` to create a `.tgz` tarball in the `tinysam` root directory (e.g., `tinysam-0.1.0.tgz`). This tarball can be installed locally by other projects.
+
+This doc has been written with AI analysis in mind.
