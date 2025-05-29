@@ -1,6 +1,6 @@
 # TinySAM: Plug and play ONNX SAM segmentation in the browser
 
-TinySAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It is a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution.
+TinySAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It uses a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution.
 
 The training code used for the model distillation process will be made available soon. TinySAM provides a stateful API for interactive segmentation by allowing users to add include/exclude clicks on an image.
 
@@ -35,18 +35,11 @@ import {
   ClickType,
 } from "tinysam";
 
-// Assuming you have an HTMLImageElement or HTMLCanvasElement `myImageElement`
-// and a canvas `myDisplayCanvas` to draw on.
-
 async function runSegmentation(myImageElement, clickPoints) {
   try {
-    // 1. Initialize TinySAM (loads models)
-    // By default, models are now loaded from CDN.
-    // You can still override with local paths if needed.
-    // See "Model Loading" section for more details.
+    // Initialize TinySAM (loads models)
     await initSegmentation({
       // To use default CDN models (recommended):
-      // No specific paths needed, or use:
       // encoderModelPath: DEFAULT_ENCODER_MODEL_PATH,
       // samModelPath: DEFAULT_SAM_MODEL_PATH,
       // For custom local/CDN models:
@@ -55,62 +48,58 @@ async function runSegmentation(myImageElement, clickPoints) {
     });
     console.log("TinySAM initialized!");
 
-    // 2. (Optional but Recommended) Precompute image embedding for faster interaction
-    // This is useful if you load an image and want to prepare it before user clicks.
+    // Precompute image embedding for faster interaction
     await precomputeEmbedding(myImageElement);
     console.log("Embedding precomputed for the image.");
 
-    // 3. Create a segmentation session for the image
+    // Create a segmentation session for the image
     const session = createSession(myImageElement);
     console.log("Segmentation session created.");
 
-    // 4. Add clicks
-    // Clicks are { x: number, y: number, type: ClickType }
-    // x, y are coordinates relative to the original image dimensions.
-    // type can be "include" or "exclude".
+    // Add clicks
     clickPoints.forEach((p) => {
       session.addClick(p.x, p.y, p.type);
     });
 
     console.log(`Added ${session.getClickCount()} clicks.`);
 
-    // 5. Perform segmentation
-    // Pass the image element again (can be the same one used for session creation/precomputation)
+    // Perform segmentation
     const imageDataMask = await session.segment(myImageElement);
 
     if (imageDataMask) {
       console.log("Segmentation successful! Mask generated:", imageDataMask);
-      // imageDataMask is an ImageData object. You can draw it on a canvas:
-      // const ctx = myDisplayCanvas.getContext('2d');
-      // myDisplayCanvas.width = imageDataMask.width;
-      // myDisplayCanvas.height = imageDataMask.height;
-      // ctx.putImageData(imageDataMask, 0, 0);
 
-      // Or, for overlaying (as done in the test app):
-      // const tempMaskCanvas = document.createElement('canvas');
-      // tempMaskCanvas.width = imageDataMask.width;
-      // tempMaskCanvas.height = imageDataMask.height;
-      // tempMaskCanvas.getContext('2d').putImageData(imageDataMask, 0, 0);
-      // mainDisplayCtx.globalAlpha = 0.5; // Example transparency
-      // mainDisplayCtx.drawImage(tempMaskCanvas, 0, 0, originalImageWidth, originalImageHeight);
+      // Example: Draw mask on canvas
+      const ctx = myDisplayCanvas.getContext('2d');
+      myDisplayCanvas.width = imageDataMask.width;
+      myDisplayCanvas.height = imageDataMask.height;
+      ctx.putImageData(imageDataMask, 0, 0);
+
+      // Example: Overlay on existing canvas
+      const tempMaskCanvas = document.createElement('canvas');
+      tempMaskCanvas.width = imageDataMask.width;
+      tempMaskCanvas.height = imageDataMask.height;
+      tempMaskCanvas.getContext('2d').putImageData(imageDataMask, 0, 0);
+      mainDisplayCtx.globalAlpha = 0.5;
+      mainDisplayCtx.drawImage(tempMaskCanvas, 0, 0, originalImageWidth, originalImageHeight);
     } else {
-      console.log("No mask generated (e.g., no clicks).");
+      console.log("No mask generated.");
     }
 
-    // 6. Session cleanup (optional, if you are done with this specific image session)
-    // session.dispose();
+    // Optional: Session cleanup
+    session.dispose();
   } catch (error) {
     console.error("Error during segmentation:", error);
   }
 }
 
 // Example usage:
-// const imageEl = document.getElementById('my-image');
-// const exampleClicks = [
-//   { x: 100, y: 150, type: "include" as ClickType },
-//   { x: 200, y: 250, type: "exclude" as ClickType }
-// ];
-// runSegmentation(imageEl, exampleClicks);
+const imageEl = document.getElementById('my-image');
+const exampleClicks = [
+  { x: 100, y: 150, type: "include" as ClickType },
+  { x: 200, y: 250, type: "exclude" as ClickType }
+];
+runSegmentation(imageEl, exampleClicks);
 ```
 
 ## API Reference
@@ -157,126 +146,32 @@ Clears all active `SegmentationSession` states. Note: This does not call `dispos
 
 ---
 
-## Model Loading: CDN by Default, Custom Paths Supported
+## Mask Format and Extraction
 
-TinySAM is designed for ease of use and performance. By default, it loads the necessary ONNX models (`encoder.onnx` and `sam.onnx`) from a CDN. This approach keeps your application bundle small and uses browser caching for faster load times for your users.
+**Important:** TinySAM returns masks in RGBA ImageData format where the mask information is stored in the alpha channel, not the RGB channels. When processing the returned ImageData object from `session.segment()`:
 
-When you initialize TinySAM without providing specific model paths, it will use default CDN URLs:
+- **Alpha channel (A) = 255:** Foreground pixel (included in the mask)
+- **Alpha channel (A) = 0:** Background pixel (excluded from the mask)
+- **RGB channels:** Typically all 0 (black) and should be ignored for mask logic
 
-```typescript
-import {
-  initSegmentation,
-  DEFAULT_ENCODER_MODEL_PATH, // Default CDN path for the encoder
-  DEFAULT_SAM_MODEL_PATH, // Default CDN path for the SAM decoder
-} from "tinysam";
+This differs from traditional grayscale masks where the mask information is stored in the RGB channels. When extracting objects or applying masks to images, always check the alpha channel values rather than RGB values. For example:
 
-async function initialize() {
-  // Initializes with default models from CDN
-  await initSegmentation();
-  // OR, explicitly using the default paths (equivalent to the above):
-  // await initSegmentation({
-  //   encoderModelPath: DEFAULT_ENCODER_MODEL_PATH,
-  //   samModelPath:     DEFAULT_SAM_MODEL_PATH,
-  // });
-  console.log("TinySAM initialized with models from CDN!");
+```javascript
+const maskData = imageDataMask.data;
+for (let i = 0; i < maskData.length; i += 4) {
+  const alpha = maskData[i + 3];
+  if (alpha === 255) {
+    console.log("Foreground pixel at:", Math.floor(i / 4));
+  }
 }
-
-initialize();
 ```
-
-**Using Your Own Models (Local or Custom CDN):**
-
-If you need to use specific versions of the ONNX models, or if you prefer to host them yourself (either locally or on your own CDN), you can easily override the default behavior by providing the paths in the `initSegmentation` options:
-
-```typescript
-import { initSegmentation } from "tinysam";
-
-async function initializeWithCustomModels() {
-  await initSegmentation({
-    encoderModelPath: "/path/to/your/local/or/custom_cdn/encoder.onnx",
-    samModelPath: "/path/to/your/local/or/custom_cdn/sam_decoder.onnx",
-  });
-  console.log("TinySAM initialized with custom models!");
-}
-
-initializeWithCustomModels();
-```
-
-This flexibility allows you to manage model deployment according to your project's specific needs while still benefiting from TinySAM's core segmentation capabilities.
-
----
-
-### `SegmentationSession` Class
-
-An instance of this class is returned by `createSession()`.
-
-#### `constructor(image: HTMLImageElement | HTMLCanvasElement)`
-
-(Internal: Use `createSession()` to get an instance)
-
-#### `addClick(x: number, y: number, type: ClickType = "include"): this`
-
-Adds a click to the session.
-
-- `x`, `y`: Coordinates on the original image.
-- `type`: `"include"` or `"exclude"`. Defaults to `"include"`.
-- Returns: The session instance for chaining.
-
-#### `removeLastClick(): this`
-
-Removes the most recently added click.
-
-- Returns: The session instance for chaining.
-
-#### `reset(): this`
-
-Clears all clicks and the last generated mask for this session.
-
-- Returns: The session instance for chaining.
-
-#### `getClicks(): Click[]`
-
-Returns an array of all current clicks in the session.
-
-- `Click`: `{ x: number, y: number, type: ClickType }`
-
-#### `getClickCount(): number`
-
-Returns the number of current clicks.
-
-#### `async segment(image: HTMLImageElement | HTMLCanvasElement): Promise<ImageData | null>`
-
-Runs segmentation using the current set of clicks for the session.
-
-- `image`: The image element (should typically be the same one the session was created with or one with identical content and dimensions).
-- Returns: A `Promise` that resolves with an `ImageData` object for the mask, or `null` if there are no clicks.
-
-#### `getLastMask(): ImageData | null`
-
-Returns the last `ImageData` mask generated by `session.segment()`, or `null` if no segmentation has been run or it was reset.
-
-#### `dispose(): void`
-
-Releases the resources and state associated with this specific session from the central session store. Call this when you are finished with a session to free up memory.
-
----
-
-### Types
-
-#### `ClickType: "include" | "exclude"`
-
-Type alias for click types.
-
-#### `Click: { x: number, y: number, type: ClickType }`
-
-Interface for a click object.
 
 ## Model Behavior
 
 - The library expects SAM-compatible ONNX models: an image encoder and a mask decoder.
-- Image preprocessing scales the longest side of the input image to 1024px (configurable by `ENCODER_INPUT_SIZE` if you modify constants, but not recommended without changing model expectations) and pads it to a square tensor for the encoder.
+- Image preprocessing scales the longest side of the input image to 1024px and pads it to a square tensor for the encoder.
 - Click coordinates are automatically scaled to match the preprocessed image dimensions.
-- The output mask is an `ImageData` object, typically 256x256 (or `SAM_MASK_SIZE` x `SAM_MASK_SIZE`), which can then be upscaled and drawn onto a canvas.
+- The output mask is an `ImageData` object, typically 256x256, which can then be upscaled and drawn onto a canvas.
 
 ## Development & Building
 
@@ -285,5 +180,3 @@ If you are working on the `tinysam` library itself:
 - Install dependencies: `npm install`
 - Build the library: `npm run build`
   This command cleans the `dist` folder, runs webpack to bundle the library, and then uses `npm pack` to create a `.tgz` tarball in the `tinysam` root directory (e.g., `tinysam-0.1.0.tgz`). This tarball can be installed locally by other projects.
-
-This doc has been written with AI analysis in mind.
