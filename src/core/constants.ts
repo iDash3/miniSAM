@@ -1,4 +1,4 @@
-export const VERSION = "0.2.0";
+export const VERSION = "0.2.4";
 
 const CDN_BASE = `https://cdn.jsdelivr.net/npm/tinysam@${VERSION}/dist`;
 // const CDN_BASE = `https://unpkg.com/tinysam@${VERSION}/dist`;
