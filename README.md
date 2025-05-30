@@ -179,4 +179,4 @@ If you are working on the `miniSAM` library itself:
 
 - Install dependencies: `npm install`
 - Build the library: `npm run build`
-  This command cleans the `dist` folder, runs webpack to bundle the library, and then uses `npm pack` to create a `.tgz` tarball in the `miniSAM` root directory (e.g., `minisam-0.1.0.tgz`). This tarball can be installed locally by other projects.
+  This command cleans the `dist` folder, runs webpack to bundle the library, and then uses `npm pack` to create a `.tgz` tarball in the `miniSAM` root directory (e.g., `minisam-0.2.0.tgz`). This tarball can be installed locally by other projects.
