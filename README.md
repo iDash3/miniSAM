@@ -1,8 +1,8 @@
-# TinySAM: Plug and play ONNX SAM segmentation in the browser
+# miniSAM: Plug and play ONNX SAM segmentation in the browser
 
-TinySAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It uses a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution.
+miniSAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It uses a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution.
 
-The training code used for the model distillation process will be made available soon. TinySAM provides a stateful API for interactive segmentation by allowing users to add include/exclude clicks on an image.
+The training code used for the model distillation process will be made available soon. miniSAM provides a stateful API for interactive segmentation by allowing users to add include/exclude clicks on an image.
 
 ## Features
 
@@ -15,17 +15,17 @@ The training code used for the model distillation process will be made available
 
 ## Installation
 
-Install TinySAM and its peer dependency `onnxruntime-web` using npm or yarn:
+Install miniSAM and its peer dependency `onnxruntime-web` using npm or yarn:
 
 ```bash
-npm install tinysam onnxruntime-web
+npm install minisam onnxruntime-web
 # or
-yarn add tinysam onnxruntime-web
+yarn add minisam onnxruntime-web
 ```
 
 ## Quick Start
 
-Here's a basic example of how to use TinySAM:
+Here's a basic example of how to use miniSAM:
 
 ```javascript
 import {
@@ -33,11 +33,11 @@ import {
   createSession,
   precomputeEmbedding,
   ClickType,
-} from "tinysam";
+} from "minisam";
 
 async function runSegmentation(myImageElement, clickPoints) {
   try {
-    // Initialize TinySAM (loads models)
+    // Initialize miniSAM (loads models)
     await initSegmentation({
       // To use default CDN models (recommended):
       // encoderModelPath: DEFAULT_ENCODER_MODEL_PATH,
@@ -46,7 +46,7 @@ async function runSegmentation(myImageElement, clickPoints) {
       // encoderModelPath: '/path/to/your/encoder.onnx',
       // samModelPath: '/path/to/your/sam_decoder.onnx'
     });
-    console.log("TinySAM initialized!");
+    console.log("miniSAM initialized!");
 
     // Precompute image embedding for faster interaction
     await precomputeEmbedding(myImageElement);
@@ -106,7 +106,7 @@ runSegmentation(imageEl, exampleClicks);
 
 ### `initSegmentation(opts?: InitializationOptions): Promise<void>`
 
-Initializes the segmentation engine by loading the ONNX models. This must be called before any other TinySAM functions. See the "Model Loading" section for details on how models are loaded and how to customize paths.
+Initializes the segmentation engine by loading the ONNX models. This must be called before any other miniSAM functions. See the "Model Loading" section for details on how models are loaded and how to customize paths.
 
 - `opts` (optional): `InitializationOptions` object.
   - `encoderModelPath?: string`: URL or path to the encoder ONNX model. If not provided, defaults to the CDN path `DEFAULT_ENCODER_MODEL_PATH`.
@@ -148,7 +148,7 @@ Clears all active `SegmentationSession` states. Note: This does not call `dispos
 
 ## Mask Format and Extraction
 
-**Important:** TinySAM returns masks in RGBA ImageData format where the mask information is stored in the alpha channel, not the RGB channels. When processing the returned ImageData object from `session.segment()`:
+**Important:** miniSAM returns masks in RGBA ImageData format where the mask information is stored in the alpha channel, not the RGB channels. When processing the returned ImageData object from `session.segment()`:
 
 - **Alpha channel (A) = 255:** Foreground pixel (included in the mask)
 - **Alpha channel (A) = 0:** Background pixel (excluded from the mask)
@@ -175,8 +175,8 @@ for (let i = 0; i < maskData.length; i += 4) {
 
 ## Development & Building
 
-If you are working on the `tinysam` library itself:
+If you are working on the `miniSAM` library itself:
 
 - Install dependencies: `npm install`
 - Build the library: `npm run build`
-  This command cleans the `dist` folder, runs webpack to bundle the library, and then uses `npm pack` to create a `.tgz` tarball in the `tinysam` root directory (e.g., `tinysam-0.1.0.tgz`). This tarball can be installed locally by other projects.
+  This command cleans the `dist` folder, runs webpack to bundle the library, and then uses `npm pack` to create a `.tgz` tarball in the `miniSAM` root directory (e.g., `minisam-0.1.0.tgz`). This tarball can be installed locally by other projects.

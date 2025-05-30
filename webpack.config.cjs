@@ -8,7 +8,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "tinysam.js",
+    filename: "minisam.js",
     library: {
       type: "module",
     },

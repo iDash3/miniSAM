@@ -1,7 +1,7 @@
-export const VERSION = "0.2.4";
+export const VERSION = "0.2.0";
 
-const CDN_BASE = `https://cdn.jsdelivr.net/npm/tinysam@${VERSION}/dist`;
-// const CDN_BASE = `https://unpkg.com/tinysam@${VERSION}/dist`;
+const CDN_BASE = `https://cdn.jsdelivr.net/npm/minisam@${VERSION}/dist`;
+// const CDN_BASE = `https://unpkg.com/minisam@${VERSION}/dist`;
 
 export const DEFAULT_ENCODER_MODEL_PATH = `${CDN_BASE}/encoder.onnx`;
 export const DEFAULT_SAM_MODEL_PATH = `${CDN_BASE}/sam.onnx`;

@@ -55,7 +55,7 @@ async function loadModel(
     return session;
   } catch (error) {
     console.error(
-      `[tinysam] loadModel: InferenceSession.create() FAILED for ${modelPath.slice(
+      `[miniSAM] loadModel: InferenceSession.create() FAILED for ${modelPath.slice(
         0,
         40
       )}...`,
@@ -135,9 +135,9 @@ export async function initSegmentation(opts?: {
         );
       }
 
-      console.log(`[tinysam] initSegmentation: Completed successfully`);
+      console.log(`[miniSAM] initSegmentation: Completed successfully`);
     } catch (error) {
-      console.error(`[tinysam] initSegmentation: Failed with error`, error);
+      console.error(`[miniSAM] initSegmentation: Failed with error`, error);
       throw error;
     } finally {
       isInitializing = false;
