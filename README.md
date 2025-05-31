@@ -2,7 +2,9 @@
 
 miniSAM is a JavaScript library for performing image segmentation directly in the browser using ONNX models. It uses a lightweight, distilled version of Meta AI's original Segment Anything Model (SAM), specifically optimized for efficient in-browser execution.
 
-The training code used for the model distillation process will be made available soon. miniSAM provides a stateful API for interactive segmentation by allowing users to add include/exclude clicks on an image.
+**New!** For React developers, we've built a React implementation at [@minisam/react](https://github.com/iDash3/minisam-react)! Get up and running quick with zero-config components, initial UI, and TypeScript support out of the box!
+
+The training code used for the model distillation process is fully available at [miniSAM-Distillation](https://github.com/iDash3/miniSAM-Distillation).
 
 ## Features
 
