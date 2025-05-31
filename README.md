@@ -169,10 +169,3 @@ for (let i = 0; i < maskData.length; i += 4) {
   }
 }
 ```
-
-## Model Behavior
-
-- The library expects SAM-compatible ONNX models: an image encoder and a mask decoder.
-- Image preprocessing scales the longest side of the input image to 1024px and pads it to a square tensor for the encoder.
-- Click coordinates are automatically scaled to match the preprocessed image dimensions.
-- The output mask is an `ImageData` object, typically 256x256, which can then be upscaled and drawn onto a canvas.
