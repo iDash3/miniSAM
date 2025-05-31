@@ -4,7 +4,9 @@ miniSAM is a JavaScript library for performing image segmentation directly in th
 
 **New!** For React developers, we've built a React implementation at [@minisam/react](https://github.com/iDash3/minisam-react)! Get up and running quick with zero-config components, initial UI, and TypeScript support out of the box!
 
-The training code used for the model distillation process is fully available at [miniSAM-Distillation](https://github.com/iDash3/miniSAM-Distillation).
+**New!** The training code used for the model distillation process is fully available at [miniSAM-Distillation](https://github.com/iDash3/miniSAM-Distillation).
+
+**Future** This library gives you the ability to run your own models, therefore you can provide fined-tuned Segmentation Models based on your own data and they will run natively on the browser. We will provide a fine tuning pipeline in the future.
 
 ## Features
 
